@@ -3,12 +3,8 @@ import re
 
 from setuptools import setup, find_packages
 
-BASE_DIR = os.path.dirname(__file__)
-VERSION_FILENAME = os.path.join(BASE_DIR, "version.py")
-PACKAGE_INFO = {}
-with open(VERSION_FILENAME) as f:
-    exec(f.read(), PACKAGE_INFO)
-version = PACKAGE_INFO["__version__"]
+with open(os.path.join(os.path.dirname(__file__), "sqlalchemy_tidb", "__init__.py")) as v:
+    version = re.compile(r'.*__version__ = "(.*?)"', re.S).match(v.read()).group(1)
 
 readme = os.path.join(os.path.dirname(__file__), "README.md")
 
@@ -17,8 +13,8 @@ dependencies = ["sqlalchemy>=1.4"]
 setup(
     name="sqlalchemy-tidb",
     version=version,
-    author="Cockroach Labs",
-    author_email="cockroach-db@googlegroups.com",
+    author="Weizhen Wang",
+    author_email="wangweizhen@pingcap.com",
     url="https://github.com/hawkingrei/sqlalchemy-tidb",
     description="tidb dialect for SQLAlchemy",
     long_description=open(readme).read(),
@@ -36,7 +32,9 @@ setup(
     zip_safe=False,
     entry_points={
         "sqlalchemy.dialects": [
-            "tidb = sqlalchemy_tidb:TiDBDialect"
+            "tidb = sqlalchemy_tidb.mysqlconnector:TiDBDialect_mysqlconnector",
+            "tidb.pyodbc = sqlalchemy_tidb.pyodbc:TiDBDialect_pyodbc",
+            "tidb.mysqlconnector = sqlalchemy_tidb.mysqlconnector:TiDBDialect_mysqlconnector",
         ]
     },
 )

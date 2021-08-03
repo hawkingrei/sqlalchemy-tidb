@@ -1,7 +1,9 @@
 from sqlalchemy import util
-from sqlalchemy.dialects.mysql.base import MySQLDialect, MySQLCompiler, MySQLDDLCompiler, MySQLTypeCompiler, \
-    MySQLIdentifierPreparer
+from sqlalchemy.dialects.mysql.base import MySQLDialect, MySQLCompiler, \
+    MySQLDDLCompiler, MySQLTypeCompiler, MySQLIdentifierPreparer, BIT
 from sqlalchemy.engine import default
+
+BIT = BIT
 
 
 class TiDBCompiler(MySQLCompiler):
