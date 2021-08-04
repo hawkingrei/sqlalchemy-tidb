@@ -3,6 +3,9 @@ from sqlalchemy.testing.requirements \
 from alembic.testing.requirements \
     import SuiteRequirements as SuiteRequirementsAlembic
 
+from sqlalchemy.testing import exclusions
+
 
 class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
-    pass
+    temporary_tables = exclusions.closed()
+    temp_table_reflection = exclusions.closed()

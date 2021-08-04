@@ -3,16 +3,16 @@ from sqlalchemy.dialects import registry
 
 registry.register(
     "tidb",
-    "sqlalchemy_tidb.mysqlconnector",
-    "TiDBDialect_mysqlconnector"
+    "sqlalchemy_tidb.mysqldb",
+    "TiDBDialect_mysqldb"
 )
 
 # sqlalchemy's dialect-testing machinery wants an entry like this.
 # It is wack. :(
 registry.register(
-    "tidb.mysqlconnector",
-    "sqlalchemy_tidb.mysqlconnector",
-    "TiDBDialect_mysqlconnector",
+    "tidb.mysqldb",
+    "sqlalchemy_tidb.mysqldb",
+    "TiDBDialect_mysqldb",
 )
 
 pytest.register_assert_rewrite("sqlalchemy.testing.assertions")
