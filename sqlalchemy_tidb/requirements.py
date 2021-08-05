@@ -3,7 +3,7 @@ from sqlalchemy.testing.requirements \
 from alembic.testing.requirements \
     import SuiteRequirements as SuiteRequirementsAlembic
 
-from sqlalchemy.testing import exclusions, skip_if, fails_if, only_on
+from sqlalchemy.testing import exclusions, skip_if, fails_if, only_on, only_if
 
 
 class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
@@ -93,3 +93,9 @@ class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
     @property
     def comment_reflection(self):
         return only_on(["tidb"])
+
+    @property
+    def mod_operator_as_percent_sign(self):
+        """target database must use a plain percent '%' as the 'modulus'
+        operator."""
+        return only_if(["tidb"])
