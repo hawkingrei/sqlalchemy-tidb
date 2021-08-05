@@ -80,3 +80,16 @@ class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
             + self.offset
         )
 
+    @property
+    def table_ddl_if_exists(self):
+        """target platform supports IF NOT EXISTS / IF EXISTS for tables."""
+        return only_on(["tidb"])
+
+    @property
+    def index_ddl_if_exists(self):
+        """target platform supports IF NOT EXISTS / IF EXISTS for indexes."""
+        return only_on(["tidb"])
+
+    @property
+    def comment_reflection(self):
+        return only_on(["tidb"])
