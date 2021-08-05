@@ -1,7 +1,7 @@
-from sqlalchemy import util
+from sqlalchemy import util, sql
 from sqlalchemy.dialects.mysql.base import MySQLDialect, MySQLCompiler, \
     MySQLDDLCompiler, MySQLTypeCompiler, MySQLIdentifierPreparer, BIT
-from sqlalchemy.engine import default
+from sqlalchemy.engine import default, reflection
 
 BIT = BIT
 
@@ -24,6 +24,7 @@ class TiDBIdentifierPreparer(MySQLIdentifierPreparer):
 
 class TiDBDialect(MySQLDialect):
     name = "tidb"
+    _needs_correct_for_88718_96365 = False
     supports_sequences = True
     supports_for_update_of = True
 
@@ -45,6 +46,43 @@ class TiDBDialect(MySQLDialect):
             )
 
         default.DefaultDialect.initialize(self, connection)
+
+    def has_sequence(self, connection, sequence_name, schema=None):
+        if not self.supports_sequences:
+            self._sequences_not_supported()
+        if not schema:
+            schema = self.default_schema_name
+        # MariaDB implements sequences as a special type of table
+        #
+        cursor = connection.execute(
+            sql.text(
+                "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES "
+                "WHERE SEQUENCE_NAME=:name AND SEQUENCE_SCHEMA=:schema_name"
+            ),
+            dict(name=sequence_name, schema_name=schema),
+        )
+        return cursor.first() is not None
+
+    @reflection.cache
+    def get_sequence_names(self, connection, schema=None, **kw):
+        if not self.supports_sequences:
+            self._sequences_not_supported()
+        if not schema:
+            schema = self.default_schema_name
+        # MariaDB implements sequences as a special type of table
+        cursor = connection.execute(
+            sql.text(
+                "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES "
+                "WHERE SEQUENCE_SCHEMA=:schema_name"
+            ),
+            dict(schema_name=schema),
+        )
+        return [
+            row[0]
+            for row in self._compat_fetchall(
+                cursor, charset=self._connection_charset
+            )
+        ]
 
     def _get_server_version_info(self, connection):
         # get database server version info explicitly over the wire
