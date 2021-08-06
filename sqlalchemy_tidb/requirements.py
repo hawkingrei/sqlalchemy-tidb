@@ -9,8 +9,7 @@ from sqlalchemy.testing import exclusions, skip_if, fails_if, only_on, only_if
 class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
     temporary_tables = exclusions.closed()
     temp_table_reflection = exclusions.closed()
-    order_by_label_with_expression = exclusions.closed()
-    order_by_col_from_union = exclusions.closed()
+    order_by_col_from_union = exclusions.open()
     time_microseconds = exclusions.closed()
     foreign_keys = exclusions.closed()
 
