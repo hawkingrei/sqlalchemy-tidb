@@ -9,3 +9,7 @@ bootstrap:
 .PHONY: test
 test:
 	tox -e py39
+
+.PHONY: lint
+lint:
+	tox -e lint
