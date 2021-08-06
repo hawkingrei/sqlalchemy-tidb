@@ -24,6 +24,12 @@ class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
         )
 
     @property
+    def unicode_ddl(self):
+        """Target driver must support some degree of non-ascii symbol names."""
+
+        return only_on(["tidb"])
+
+    @property
     def unbounded_varchar(self):
         """Target database must support VARCHAR with no length"""
 
@@ -72,12 +78,12 @@ class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
     @property
     def sql_expression_limit_offset(self):
         return (
-            fails_if(
-                ["tidb"],
-                "Target backend can't accommodate full expressions in "
-                "OFFSET or LIMIT",
-            )
-            + self.offset
+                fails_if(
+                    ["tidb"],
+                    "Target backend can't accommodate full expressions in "
+                    "OFFSET or LIMIT",
+                )
+                + self.offset
         )
 
     @property
