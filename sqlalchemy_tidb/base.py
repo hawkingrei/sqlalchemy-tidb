@@ -33,6 +33,12 @@ class TiDBDialect(MySQLDialect):
     type_compiler = TiDBTypeCompiler
     preparer = TiDBIdentifierPreparer
 
+    @property
+    def _support_float_cast(self):
+        if not self.server_version_info:
+            return False
+        return True
+
     def initialize(self, connection):
         self._connection_charset = self._detect_charset(connection)
         self._detect_sql_mode(connection)
