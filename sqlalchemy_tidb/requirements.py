@@ -14,6 +14,34 @@ class Requirements(SuiteRequirementsSQLA, SuiteRequirementsAlembic):
     foreign_keys = exclusions.closed()
 
     @property
+    def reflects_json_type(self):
+        return only_on(["tidb"])
+
+    @property
+    def tidb_non_strict(self):
+        def check(config):
+            row = (
+                config.db.connect(close_with_result=True)
+                .exec_driver_sql("show variables like 'sql_mode'")
+                .first()
+            )
+            return not row or "STRICT_TRANS_TABLES" not in row[1]
+
+        return only_if(check)
+
+    @property
+    def tidb_zero_date(self):
+        def check(config):
+            row = (
+                config.db.connect(close_with_result=True)
+                .exec_driver_sql("show variables like 'sql_mode'")
+                .first()
+            )
+            return not row or "NO_ZERO_DATE" not in row[1]
+
+        return only_if(check)
+
+    @property
     def datetime_microseconds(self):
         """target dialect supports representation of Python
         datetime.datetime() with microsecond objects."""
