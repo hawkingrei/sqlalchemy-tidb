@@ -1,4 +1,5 @@
 from sqlalchemy import util, sql
+from . import reflection as _reflection
 from sqlalchemy.dialects.mysql.base import MySQLDialect, MySQLCompiler, \
     MySQLDDLCompiler, MySQLTypeCompiler, MySQLIdentifierPreparer, BIT
 from sqlalchemy.engine import default, reflection
@@ -38,6 +39,15 @@ class TiDBDialect(MySQLDialect):
         if not self.server_version_info:
             return False
         return True
+
+    @util.memoized_property
+    def _tabledef_parser(self):
+        """return the MySQLTableDefinitionParser, generate if needed.
+        The deferred creation ensures that the dialect has
+        retrieved server version information first.
+        """
+        preparer = self.identifier_preparer
+        return _reflection.MySQLTableDefinitionParser(self, preparer)
 
     def initialize(self, connection):
         self._connection_charset = self._detect_charset(connection)
