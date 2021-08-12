@@ -28,7 +28,7 @@ class TiDBDialect(MySQLDialect):
     _needs_correct_for_88718_96365 = False
     supports_sequences = True
     supports_for_update_of = True
-
+    tidb_version = (0,0,0)
     statement_compiler = TiDBCompiler
     ddl_compiler = TiDBDDLCompiler
     type_compiler = TiDBTypeCompiler
@@ -60,6 +60,7 @@ class TiDBDialect(MySQLDialect):
             self.identifier_preparer = self.preparer(
                 self, server_ansiquotes=self._server_ansiquotes
             )
+        self.tidb_version = self._get_server_version_info(connection)
 
         default.DefaultDialect.initialize(self, connection)
 
